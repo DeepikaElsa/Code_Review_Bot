@@ -28,8 +28,8 @@ Paste your code, choose a review mode, and get instant expert-level feedback —
 
 | | |
 |:---:|:---:|
-| ![Screenshot 1](images/1.png) | ![Screenshot 2](images/2.png) |
-| ![Screenshot 3](images/3.png) | ![Screenshot 4](images/4.png) |
+| ![Screenshot 1](img/1.png) | ![Screenshot 2](img/2.png) |
+| ![Screenshot 3](img/3.png) | ![Screenshot 4](img/4.png) |
 
 </div>
 

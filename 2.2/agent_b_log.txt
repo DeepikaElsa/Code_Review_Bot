@@ -1,0 +1,36 @@
+[03:47:01] [Agent-B] [INFO ] listening on 127.0.0.1:5050
+[03:47:02] [Agent-B] [INFO ] connection from 127.0.0.1:56412
+[03:47:02] [Agent-B] [RECV ] HELLO          id=24aae56e from=Agent-A
+[03:47:02] [Agent-B] [SEND ] HELLO_ACK      id=e5a7aae3 reply_to=24aae56e
+[03:47:02] [Agent-B] [RECV ] STATE_TRANSFER id=52203279 from=Agent-A
+[03:47:02] [Agent-B] [STATE] stored state of CodeReviewBot-A: mode=COMPLEXITY files=['ui_render.py', 'auth.py', 'parser.py'] thresholds={'max_complexity': 4, 'min_doc_coverage': 0.3}
+[03:47:02] [Agent-B] [SEND ] ACK            id=de175d9b reply_to=52203279
+[03:47:02] [Agent-B] [AUTO ] sensitive files ['auth.py'] queued, pushing PARAM_UPDATE to switch mode
+[03:47:02] [Agent-B] [SEND ] PARAM_UPDATE   id=6c03919c (unsolicited)
+[03:47:02] [Agent-B] [RECV ] ACK            id=0f9d43c4 from=Agent-A
+[03:47:02] [Agent-B] [INFO ] peer ACK for 6c03919c: {'status': 'applied', 'review_mode': 'SECURITY'}
+[03:47:03] [Agent-B] [RECV ] ALERT          id=5ecf72f7 from=Agent-A
+[03:47:03] [Agent-B] [AUTO ] CRITICAL alert: ordering merge block
+[03:47:03] [Agent-B] [SEND ] ACTION         id=db3bbb82 reply_to=5ecf72f7
+[03:47:03] [Agent-B] [RECV ] ALERT          id=238a7a92 from=Agent-A
+[03:47:03] [Agent-B] [AUTO ] HIGH alert: scheduling focused review
+[03:47:03] [Agent-B] [SEND ] ACTION         id=08a5382e reply_to=238a7a92
+[03:47:03] [Agent-B] [RECV ] ALERT          id=6ad8cac5 from=Agent-A
+[03:47:03] [Agent-B] [AUTO ] LOW alert: logged only
+[03:47:03] [Agent-B] [SEND ] ACK            id=02128524 reply_to=6ad8cac5
+[03:47:03] [Agent-B] [RECV ] REVIEW_REQUEST id=f49f7af9 from=Agent-A
+[03:47:03] [Agent-B] [AUTO ] reviewing login.py in ALL mode: 6 finding(s)
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=131eddbb reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=a2ac6904 reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=c2f90a5b reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=f7da6be1 reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=3a5c763e reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_CHUNK   id=4daed4db reply_to=f49f7af9
+[03:47:03] [Agent-B] [SEND ] REVIEW_RESULT  id=87baf7b2 reply_to=f49f7af9
+[03:47:03] [Agent-B] [ERROR] rejected bad frame: bad JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+[03:47:03] [Agent-B] [RECV ] ALERT          id=91c4dfa4 from=Agent-A
+[03:47:03] [Agent-B] [AUTO ] LOW alert: logged only
+[03:47:03] [Agent-B] [SEND ] ACK            id=5aacdaba reply_to=91c4dfa4
+[03:47:03] [Agent-B] [RECV ] BYE            id=b63f3a54 from=Agent-A
+[03:47:03] [Agent-B] [SEND ] BYE_ACK        id=b1f5b9d9 reply_to=b63f3a54
+[03:47:03] [Agent-B] [INFO ] server socket closed

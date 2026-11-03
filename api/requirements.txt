@@ -1,0 +1,9 @@
+flask==3.0.2
+requests==2.31.0
+# Verifies Supabase access tokens (HS256) without a network round-trip.
+PyJWT==2.9.0
+# Optional: lets the Python verifier catch undefined names and unused imports,
+# not just syntax errors. Safe to remove.
+pyflakes==3.2.0
+# Production WSGI server (used by the Docker image; dev uses Flask's server).
+gunicorn==22.0.0

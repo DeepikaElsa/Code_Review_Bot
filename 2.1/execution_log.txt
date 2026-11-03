@@ -1,0 +1,48 @@
+====================================================================================
+ CodeReviewBot: Background Daemon + Worker Pool (Assignment 2.1)
+====================================================================================
+[  0.002s] [RepoMonitor] daemon started, polling every 0.5s
+[  0.003s] [Worker-1  ] worker started
+[  0.003s] [Worker-2  ] worker started
+[  0.003s] [Worker-3  ] worker started
+[  0.527s] [RepoMonitor] poll#1: 1 new commit(s) ['C001'] (poll latency 23.7ms)
+[  0.723s] [Worker-2  ] job#1 STYLE_REVIEW parser.py (C001) wait=   0.2ms run= 195.5ms [completed=1]
+[  1.008s] [UI        ] heartbeat | queue=0 submitted=1 completed=1
+[  1.039s] [RepoMonitor] poll#2: no new commits (poll latency 12.2ms)
+[  1.564s] [RepoMonitor] poll#3: no new commits (poll latency 24.8ms)
+[  2.018s] [UI        ] heartbeat | queue=0 submitted=1 completed=1
+[  2.111s] [RepoMonitor] poll#4: 1 new commit(s) ['C002'] (poll latency 46.6ms)
+[  2.211s] [Worker-2  ] job#2 SECURITY_REVIEW auth.py (C002) wait=   0.2ms run=  99.0ms [completed=2]
+[  2.661s] [RepoMonitor] poll#5: no new commits (poll latency 49.7ms)
+[  3.045s] [UI        ] heartbeat | queue=0 submitted=2 completed=2
+[  3.181s] [RepoMonitor] poll#6: 3 new commit(s) ['C003', 'C004', 'C005'] (poll latency 19.9ms)
+[  3.268s] [Worker-1  ] job#3 DOCUMENTATION_REVIEW auth.py (C003) wait=   0.3ms run=  86.6ms [completed=3]
+[  3.269s] [Worker-3  ] job#5 STYLE_REVIEW config.py (C005) wait=   0.2ms run=  87.2ms [completed=4]
+[  3.473s] [LISTENER  ] property 'completed' changed 4 -> 5
+[  3.473s] [Worker-2  ] job#4 COMPLEXITY_REVIEW auth.py (C004) wait=   0.2ms run= 291.4ms [completed=5]
+[  3.715s] [RepoMonitor] poll#7: no new commits (poll latency 33.5ms)
+[  4.047s] [UI        ] heartbeat | queue=0 submitted=5 completed=5
+[  4.249s] [RepoMonitor] poll#8: 3 new commit(s) ['C006', 'C007', 'C008'] (poll latency 33.4ms)
+[  4.413s] [Worker-1  ] job#8 COMPLEXITY_REVIEW ui_render.py (C008) wait=   0.1ms run= 163.9ms [completed=6]
+[  4.453s] [Worker-3  ] job#6 COMPLEXITY_REVIEW auth.py (C006) wait=   0.1ms run= 204.1ms [completed=7]
+[  4.530s] [Worker-2  ] job#7 DOCUMENTATION_REVIEW auth.py (C007) wait=   0.1ms run= 281.1ms [completed=8]
+[  4.771s] [RepoMonitor] poll#9: 1 new commit(s) ['C009'] (poll latency 21.9ms)
+[  5.014s] [Worker-1  ] job#9 SECURITY_REVIEW stream_handler.py (C009) wait=   0.1ms run= 242.8ms [completed=9]
+[  5.049s] [UI        ] heartbeat | queue=0 submitted=9 completed=9
+[  5.049s] [MAIN      ] stopping: no more polling, draining queue
+[  5.049s] [RepoMonitor] daemon stopped
+[  5.054s] [Worker-3  ] worker stopped
+[  5.131s] [Worker-2  ] worker stopped
+[  5.215s] [Worker-1  ] worker stopped
+====================================================================================
+ EXECUTION LATENCY PERFORMANCE LOG
+====================================================================================
+ Jobs submitted / completed   : 9 / 9
+ Jobs left in queue           : 0
+ Worker distribution          : {'Worker-2': 4, 'Worker-1': 3, 'Worker-3': 2}
+ Queue wait   (ms)  avg=    0.2  max=    0.3  p95=    0.3
+ Review time  (ms)  avg=  183.5  max=  291.4  p95=  291.4
+ Poll latency (ms)  avg=   29.5  max=   49.7  (9 polls)
+ UI tick gap  (ms)  avg=  100.9  max=  125.8  (target 100)
+ Thread-safety check          : PASS (submitted == completed == sum of per-worker counts)
+====================================================================================

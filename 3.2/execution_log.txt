@@ -1,0 +1,94 @@
+================================================================================================
+ CodeReviewBot: Self-Interested Utility Optimization (Assignment 3.2)
+================================================================================================
+ Job   : auth.py (320 lines), mode SECURITY
+ Limits: budget <= 50 credits, deadline <= 60 min, privacy >= 0.5, skill >= 0.6
+ Weights: cost=0.20, time=0.15, quality=0.35, privacy=0.20, streaming=0.10
+
+ U = w_cost*(1-price/budget) + w_time*(1-time/deadline)
+     + w_quality*H(skill, 1-fpr) + w_privacy*privacy + w_stream*streaming
+
+================================================================================================
+ THE 10 OPTIONS
+================================================================================================
+ #  plan                      kind     price  min  skill   fpr  priv  strm
+ 1  LocalLite-7B              local        8   40   0.60  0.20   1.0   yes
+ 2  LocalPro-34B              local       22   28   0.82  0.10   1.0   yes
+ 3  CloudTurbo                cloud       35    8   0.90  0.08   0.2   yes
+ 4  CloudBudget               cloud        6   55   0.50  0.30   0.2    no
+ 5  HybridGuard               hybrid      30   15   0.88  0.07   0.6   yes
+ 6  SecSpecialist-Cloud       cloud       55   12   0.96  0.05   0.2   yes
+ 7  SecSpecialist-OnPrem      local       48   30   0.94  0.06   1.0   yes
+ 8  LinterPlusLLM             hybrid      14   20   0.70  0.15   0.6    no
+ 9  CommunityBot              cloud        0   90    n/a  0.35   0.2    no
+ 10 HybridPremium-Overpriced  hybrid      45   25   0.78  0.12   0.6   yes
+
+================================================================================================
+ STAGE 2: HARD CONSTRAINT FILTER
+================================================================================================
+ REJECT CloudTurbo                 privacy 0.2 < min 0.5
+ REJECT CloudBudget                skill 0.50 < min 0.60; privacy 0.2 < min 0.5
+ REJECT SecSpecialist-Cloud        price 55 > budget 50; privacy 0.2 < min 0.5
+ REJECT CommunityBot               mode SECURITY not supported
+ -> 6 of 10 plans feasible (boundary values count: LocalLite skill 0.60 == min 0.60 passes)
+
+================================================================================================
+ STAGE 3: PARETO PRUNING (no positive weights can ever pick these)
+================================================================================================
+ PRUNE  HybridPremium-Overpriced   dominated by HybridGuard
+ -> front of 5 plans, utility evaluated 5 times instead of 10
+
+================================================================================================
+ STAGE 4: UTILITY SCORES (best first)
+================================================================================================
+ rank plan                       cost   time  quality  privacy  stream        U
+ 1    LocalPro-34B              0.112  0.080    0.300    0.200   0.100   0.7923   <== CHOSEN
+ 2    LocalLite-7B              0.168  0.050    0.240    0.200   0.100   0.7580
+ 3    HybridGuard               0.080  0.112    0.317    0.120   0.100   0.7290
+ 4    SecSpecialist-OnPrem      0.008  0.075    0.329    0.200   0.100   0.7120
+ 5    LinterPlusLLM             0.144  0.100    0.269    0.120   0.000   0.6327
+ (columns show weight x term, they add up to U)
+
+================================================================================================
+ EVIDENCE THAT THE CHOICE IS THE MATHEMATICAL OPTIMUM
+================================================================================================
+ optimizer pick                     : LocalPro-34B
+ exhaustive search over all 10      : LocalPro-34B
+ exact Fraction arithmetic (no float): LocalPro-34B
+ margin over runner-up (LocalLite-7B) : 0.0343
+ PASS: all three methods agree
+ fuzz test: 300 random catalogs, random weights -> 0 mismatches vs exhaustive search
+ PASS: pruning never lost the optimum
+
+ weight sensitivity (5000 trials, each weight varied +/-30%):
+   LocalPro-34B              99.4%  ########################################
+   LocalLite-7B               0.6%  
+   HybridGuard                0.0%  
+   SecSpecialist-OnPrem       0.0%  
+   LinterPlusLLM              0.0%  
+
+================================================================================================
+ DECISION: buy 'LocalPro-34B' for 22 credits, 28 min, U = 0.7923
+================================================================================================
+
+================================================================================================
+ ERROR AND CONSTRAINT BOUNDARY TESTS
+================================================================================================
+ [PASS] price exactly equal to budget is accepted (inclusive bound)
+ [PASS] price off by 1e-10 (float noise) is still accepted
+ [PASS] price 0.01 over budget is rejected, advice is returned  (no feasible plan; closest is Over which breaks: price 50.01 > budget 50)
+ [PASS] price 0 (free plan) is handled
+ [PASS] empty catalog returns a clean 'no decision', no crash  (no valid plans in catalog)
+ [PASS] 7 malformed entries skipped, the 1 valid entry still chosen  (skipped=7)
+ [PASS] weights that do not sum to 1 are rescaled (x10 gives same result)
+ [PASS] negative weight raises a clear ValueError  (weight 'cost' is negative (-0.1))
+ [PASS] all-zero weights raises a clear ValueError  (weights sum to zero)
+ [PASS] missing weight key raises a clear ValueError  (weights must have exactly ('cost', 'time', 'quality', 'privacy', 'streaming'))
+ [PASS] NaN weight raises a clear ValueError  (weight 'time' is not a finite number)
+ [PASS] unknown review mode raises a clear ValueError  (unknown review mode 'TYPO')
+ [PASS] zero budget raises ValueError (avoids divide by zero)  (budget must be a positive number, got 0)
+ [PASS] exact utility tie is broken deterministically (name order)
+ [PASS] identical plans do not eliminate each other (no strict dominance)
+ [PASS] plan that does not support the mode is filtered, advice given  (no feasible plan and no relaxable candidate)
+ [PASS] no feasible plan: advice names the closest candidate  (no feasible plan; closest is Slow which breaks: time 61 > deadline 60)
+ All boundary tests passed.

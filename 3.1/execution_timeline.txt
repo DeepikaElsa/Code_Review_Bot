@@ -1,0 +1,195 @@
+CodeReviewBot Multi-Agent Coordination (Contract Net + bargaining)
+
+============================================================================================
+ SCENARIO A: normal review contract
+ job: auth.py (320 lines) mode=SECURITY budget=100 credits deadline=60 min
+============================================================================================
+
+--- PHASE 1: CALL FOR PROPOSALS ---
+[T01] Requester  --CFP--> SecBot     file=auth.py mode=SECURITY budget=100 deadline=60
+[T02] Requester  --CFP--> GeneralBot file=auth.py mode=SECURITY budget=100 deadline=60
+
+--- PHASE 2: BIDS ---
+        . SecBot: cost=57.6 floor=(63.4 credits, 32.0 min) U_rev(opening)=0.861
+[T03] SecBot     --PROPOSE--> Requester  round=0 price=95.0 time=48.8m q=0.95
+        . GeneralBot: cost=38.4 floor=(42.2 credits, 26.7 min) U_rev(opening)=0.763
+[T04] GeneralBot --PROPOSE--> Requester  round=0 price=85.0 time=46.7m q=0.60
+
+--- PHASE 3: EVALUATION AND AWARD ---
+        . Requester: U_req(SecBot opening bid) = 0.399
+        . Requester: U_req(GeneralBot opening bid) = 0.326
+        > best bid: SecBot
+[T05] Requester  --AWARD--> SecBot     reason=highest utility bid
+[T06] Requester  --REJECT_PROPOSAL--> GeneralBot reason=lower utility
+
+--- PHASE 4: NEGOTIATION ROUNDS ---
+        . Requester: U_req(received)=0.399 vs U_req(my next offer)=0.736 feasible=False -> continue
+        -- round 1 --
+[T07] Requester  --COUNTER_PROPOSE--> SecBot     round=1 price=41.2 time=19.5m q=0.95
+        . GeneralBot: bid rejected, standing down
+        . SecBot: shortlisted, entering negotiation
+        . SecBot: U_rev(received)=0.098 vs U_rev(my round-1 offer)=0.830 feasible=False -> counter
+[T08] SecBot     --COUNTER_PROPOSE--> Requester  round=1 price=93.4 time=47.9m q=0.95
+        . Requester: U_req(received)=0.409 vs U_req(my next offer)=0.692 feasible=False -> continue
+        -- round 2 --
+[T09] Requester  --COUNTER_PROPOSE--> SecBot     round=2 price=47.5 time=24.0m q=0.95
+        . SecBot: U_rev(received)=0.120 vs U_rev(my round-2 offer)=0.778 feasible=False -> counter
+[T10] SecBot     --COUNTER_PROPOSE--> Requester  round=2 price=90.6 time=46.5m q=0.95
+        . Requester: U_req(received)=0.426 vs U_req(my next offer)=0.649 feasible=False -> continue
+        -- round 3 --
+[T11] Requester  --COUNTER_PROPOSE--> SecBot     round=3 price=53.8 time=28.5m q=0.95
+        . SecBot: U_rev(received)=0.142 vs U_rev(my round-3 offer)=0.712 feasible=False -> counter
+[T12] SecBot     --COUNTER_PROPOSE--> Requester  round=3 price=87.2 time=44.7m q=0.95
+        . Requester: U_req(received)=0.448 vs U_req(my next offer)=0.605 feasible=False -> continue
+        -- round 4 --
+[T13] Requester  --COUNTER_PROPOSE--> SecBot     round=4 price=60.0 time=33.0m q=0.95
+        . SecBot: U_rev(received)=0.205 vs U_rev(my round-4 offer)=0.636 feasible=False -> counter
+[T14] SecBot     --COUNTER_PROPOSE--> Requester  round=4 price=83.2 time=42.6m q=0.95
+        . Requester: U_req(received)=0.472 vs U_req(my next offer)=0.561 feasible=True -> continue
+        -- round 5 --
+[T15] Requester  --COUNTER_PROPOSE--> SecBot     round=5 price=66.2 time=37.5m q=0.95
+        . SecBot: U_rev(received)=0.330 vs U_rev(my round-5 offer)=0.552 feasible=True -> counter
+[T16] SecBot     --COUNTER_PROPOSE--> Requester  round=5 price=78.8 time=40.2m q=0.95
+        . Requester: U_req(received)=0.500 vs U_req(my next offer)=0.517 feasible=True -> continue
+        -- round 6 --
+[T17] Requester  --COUNTER_PROPOSE--> SecBot     round=6 price=72.5 time=42.0m q=0.95
+        . SecBot: U_rev(received)=0.456 vs U_rev(my round-6 offer)=0.459 feasible=True -> counter
+[T18] SecBot     --COUNTER_PROPOSE--> Requester  round=6 price=74.0 time=37.7m q=0.95
+        . Requester: U_req(received)=0.529 vs U_req(my next offer)=0.474 feasible=True -> ACCEPT
+
+--- PHASE 5: CONSENSUS HANDSHAKE ---
+[T19] Requester  --ACCEPT_PROPOSAL--> SecBot     round=6 price=74.0 time=37.7m q=0.95
+[T20] SecBot     --CONFIRM--> Requester  price=74.0 time=37.7m q=0.95 final=terms locked
+[T21] Requester  --FINAL_ACK--> SecBot     outcome=DEAL
+[T22] Requester  --SHUTDOWN--> SecBot     
+[T23] Requester  --SHUTDOWN--> GeneralBot 
+
+--------------------------------------------------------------------------------------------
+ NEGOTIATION TIMELINE (offers only, utilities from both private models)
+--------------------------------------------------------------------------------------------
+ turn round from         price   time   U_requester             U_reviewer              
+ T03  0     SecBot        95.0   48.8   ########............ 0.40 #################... 0.86
+ T07  1     Requester     41.2   19.5   ###############..... 0.74 ##.................. 0.10
+ T08  1     SecBot        93.4   47.9   ########............ 0.41 #################... 0.83
+ T09  2     Requester     47.5   24.0   ##############...... 0.69 ##.................. 0.12
+ T10  2     SecBot        90.6   46.5   #########........... 0.43 ################.... 0.78
+ T11  3     Requester     53.8   28.5   #############....... 0.65 ###................. 0.14
+ T12  3     SecBot        87.2   44.7   #########........... 0.45 ##############...... 0.71
+ T13  4     Requester     60.0   33.0   ############........ 0.60 ####................ 0.20
+ T14  4     SecBot        83.2   42.6   #########........... 0.47 #############....... 0.64
+ T15  5     Requester     66.2   37.5   ###########......... 0.56 #######............. 0.33
+ T16  5     SecBot        78.8   40.2   ##########.......... 0.50 ###########......... 0.55
+ T17  6     Requester     72.5   42.0   ##########.......... 0.52 #########........... 0.46
+ T18  6     SecBot        74.0   37.7   ###########......... 0.53 #########........... 0.46
+
+--------------------------------------------------------------------------------------------
+ RESULT
+--------------------------------------------------------------------------------------------
+ outcome        : DEAL
+ contractor     : SecBot  (agreed in round 6)
+ agreed terms   : 74.0 credits, 37.7 minutes, quality 0.95
+ U_requester    : 0.529    U_reviewer: 0.459    joint utility: 0.989
+ agent states   : SecBot=DEAL, GeneralBot=REJECTED, Requester=DEAL
+ threads alive  : none (clean termination)
+ messages sent  : 23
+
+============================================================================================
+ SCENARIO B: urgent review, no zone of agreement
+ job: auth.py (320 lines) mode=SECURITY budget=100 credits deadline=30 min
+============================================================================================
+
+--- PHASE 1: CALL FOR PROPOSALS ---
+[T01] Requester  --CFP--> SecBot     file=auth.py mode=SECURITY budget=100 deadline=30
+[T02] Requester  --CFP--> GeneralBot file=auth.py mode=SECURITY budget=100 deadline=30
+
+--- PHASE 2: BIDS ---
+        . SecBot: cannot serve: needs 63.4 credits / 32.0 min, job allows 100 / 30
+[T03] SecBot     --REFUSE--> Requester  reason=cannot meet constraints
+        . GeneralBot: cost=38.4 floor=(42.2 credits, 26.7 min) U_rev(opening)=0.816
+[T04] GeneralBot --PROPOSE--> Requester  round=0 price=85.0 time=28.7m q=0.60
+
+--- PHASE 3: EVALUATION AND AWARD ---
+        . Requester: U_req(GeneralBot opening bid) = 0.281
+        > best bid: GeneralBot
+[T05] Requester  --AWARD--> GeneralBot reason=highest utility bid
+
+--- PHASE 4: NEGOTIATION ROUNDS ---
+        . Requester: U_req(received)=0.281 vs U_req(my next offer)=0.614 feasible=False -> continue
+        -- round 1 --
+[T06] Requester  --COUNTER_PROPOSE--> GeneralBot round=1 price=41.2 time=9.8m q=0.60
+        . GeneralBot: shortlisted, entering negotiation
+        . GeneralBot: U_rev(received)=0.130 vs U_rev(my round-1 offer)=0.779 feasible=False -> counter
+[T07] GeneralBot --COUNTER_PROPOSE--> Requester  round=1 price=81.8 time=28.5m q=0.60
+        . Requester: U_req(received)=0.295 vs U_req(my next offer)=0.570 feasible=False -> continue
+        -- round 2 --
+[T08] Requester  --COUNTER_PROPOSE--> GeneralBot round=2 price=47.5 time=12.0m q=0.60
+        . GeneralBot: U_rev(received)=0.223 vs U_rev(my round-2 offer)=0.727 feasible=False -> counter
+[T09] GeneralBot --COUNTER_PROPOSE--> Requester  round=2 price=77.4 time=28.3m q=0.60
+        . Requester: U_req(received)=0.314 vs U_req(my next offer)=0.526 feasible=False -> continue
+        -- round 3 --
+[T10] Requester  --COUNTER_PROPOSE--> GeneralBot round=3 price=53.8 time=14.2m q=0.60
+        . GeneralBot: U_rev(received)=0.317 vs U_rev(my round-3 offer)=0.668 feasible=False -> counter
+[T11] GeneralBot --COUNTER_PROPOSE--> Requester  round=3 price=72.5 time=28.1m q=0.60
+        . Requester: U_req(received)=0.336 vs U_req(my next offer)=0.483 feasible=False -> continue
+        -- round 4 --
+[T12] Requester  --COUNTER_PROPOSE--> GeneralBot round=4 price=60.0 time=16.5m q=0.60
+        . GeneralBot: U_rev(received)=0.410 vs U_rev(my round-4 offer)=0.604 feasible=False -> counter
+[T13] GeneralBot --COUNTER_PROPOSE--> Requester  round=4 price=67.0 time=27.8m q=0.60
+        . Requester: U_req(received)=0.360 vs U_req(my next offer)=0.439 feasible=False -> continue
+        -- round 5 --
+[T14] Requester  --COUNTER_PROPOSE--> GeneralBot round=5 price=66.2 time=18.8m q=0.60
+        . GeneralBot: U_rev(received)=0.504 vs U_rev(my round-5 offer)=0.535 feasible=False -> counter
+[T15] GeneralBot --COUNTER_PROPOSE--> Requester  round=5 price=61.2 time=27.6m q=0.60
+        . Requester: U_req(received)=0.385 vs U_req(my next offer)=0.395 feasible=False -> continue
+        -- round 6 --
+[T16] Requester  --COUNTER_PROPOSE--> GeneralBot round=6 price=72.5 time=21.0m q=0.60
+        . GeneralBot: U_rev(received)=0.598 vs U_rev(my round-6 offer)=0.463 feasible=False -> counter
+[T17] GeneralBot --COUNTER_PROPOSE--> Requester  round=6 price=55.2 time=27.3m q=0.60
+        . Requester: U_req(received)=0.412 vs U_req(my next offer)=0.351 feasible=False -> continue
+        -- round 7 --
+[T18] Requester  --COUNTER_PROPOSE--> GeneralBot round=7 price=78.8 time=23.2m q=0.60
+        . GeneralBot: U_rev(received)=0.691 vs U_rev(my round-7 offer)=0.388 feasible=False -> counter
+[T19] GeneralBot --COUNTER_PROPOSE--> Requester  round=7 price=48.8 time=27.0m q=0.60
+        . Requester: U_req(received)=0.440 vs U_req(my next offer)=0.307 feasible=False -> continue
+        -- round 8 --
+[T20] Requester  --COUNTER_PROPOSE--> GeneralBot round=8 price=85.0 time=25.5m q=0.60
+        . GeneralBot: U_rev(received)=0.785 vs U_rev(my round-8 offer)=0.310 feasible=False -> counter
+[T21] GeneralBot --COUNTER_PROPOSE--> Requester  round=8 price=42.2 time=26.7m q=0.60
+        . Requester: U_req(received)=0.469 vs U_req(my next offer)=0.307 feasible=False -> continue
+
+--- PHASE 5: TERMINATION WITHOUT AGREEMENT ---
+[T22] Requester  --NO_DEAL--> GeneralBot reason=no agreement after 8 rounds
+[T23] GeneralBot --FINAL_ACK--> Requester  outcome=NO_DEAL
+[T24] Requester  --SHUTDOWN--> SecBot     
+[T25] Requester  --SHUTDOWN--> GeneralBot 
+
+--------------------------------------------------------------------------------------------
+ NEGOTIATION TIMELINE (offers only, utilities from both private models)
+--------------------------------------------------------------------------------------------
+ turn round from         price   time   U_requester             U_reviewer              
+ T04  0     GeneralBot    85.0   28.7   ######.............. 0.28 ################.... 0.82
+ T06  1     Requester     41.2    9.8   ############........ 0.61 ###................. 0.13
+ T07  1     GeneralBot    81.8   28.5   ######.............. 0.30 ################.... 0.78
+ T08  2     Requester     47.5   12.0   ###########......... 0.57 ####................ 0.22
+ T09  2     GeneralBot    77.4   28.3   ######.............. 0.31 ###############..... 0.73
+ T10  3     Requester     53.8   14.2   ###########......... 0.53 ######.............. 0.32
+ T11  3     GeneralBot    72.5   28.1   #######............. 0.34 #############....... 0.67
+ T12  4     Requester     60.0   16.5   ##########.......... 0.48 ########............ 0.41
+ T13  4     GeneralBot    67.0   27.8   #######............. 0.36 ############........ 0.60
+ T14  5     Requester     66.2   18.8   #########........... 0.44 ##########.......... 0.50
+ T15  5     GeneralBot    61.2   27.6   ########............ 0.39 ###########......... 0.54
+ T16  6     Requester     72.5   21.0   ########............ 0.40 ############........ 0.60
+ T17  6     GeneralBot    55.2   27.3   ########............ 0.41 #########........... 0.46
+ T18  7     Requester     78.8   23.2   #######............. 0.35 ##############...... 0.69
+ T19  7     GeneralBot    48.8   27.0   #########........... 0.44 ########............ 0.39
+ T20  8     Requester     85.0   25.5   ######.............. 0.31 ################.... 0.78
+ T21  8     GeneralBot    42.2   26.7   #########........... 0.47 ######.............. 0.31
+
+--------------------------------------------------------------------------------------------
+ RESULT
+--------------------------------------------------------------------------------------------
+ outcome        : NO_DEAL
+ reason         : round limit reached
+ agent states   : SecBot=REFUSED, GeneralBot=NO_DEAL, Requester=NO_DEAL
+ threads alive  : none (clean termination)
+ messages sent  : 25

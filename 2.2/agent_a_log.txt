@@ -1,0 +1,61 @@
+[03:47:02] [Agent-A] [INFO ] connected to 127.0.0.1:5050
+[03:47:02] [Agent-A] [STEP ] 1. handshake
+[03:47:02] [Agent-A] [SEND ] HELLO          id=24aae56e (271 bytes)
+[03:47:02] [Agent-A] [RECV ] HELLO_ACK      id=e5a7aae3 reply_to=24aae56e
+[03:47:02] [Agent-A] [RTT  ] HELLO round trip 0.5 ms
+[03:47:02] [Agent-A] [INFO ] peer capabilities: ['STATE_TRANSFER', 'ALERT', 'REVIEW_REQUEST']
+[03:47:02] [Agent-A] [STEP ] 2. transfer current state to Agent-B
+[03:47:02] [Agent-A] [STATE] sending mode=COMPLEXITY files=['ui_render.py', 'auth.py', 'parser.py']
+[03:47:02] [Agent-A] [SEND ] STATE_TRANSFER id=52203279 (612 bytes)
+[03:47:02] [Agent-A] [RECV ] ACK            id=de175d9b reply_to=52203279
+[03:47:02] [Agent-A] [RTT  ] STATE_TRANSFER round trip 0.5 ms
+[03:47:02] [Agent-A] [INFO ] B stored state: {'status': 'stored', 'fields': 8, 'checksum_verified': True}
+[03:47:02] [Agent-A] [RECV ] PARAM_UPDATE   id=6c03919c reply_to=None
+[03:47:02] [Agent-A] [AUTO ] PARAM_UPDATE applied: mode COMPLEXITY -> SECURITY (reason: sensitive files queued: ['auth.py'])
+[03:47:02] [Agent-A] [SEND ] ACK            id=0f9d43c4 (278 bytes)
+[03:47:03] [Agent-A] [STATE] state after B's update: mode=SECURITY
+[03:47:03] [Agent-A] [STEP ] 3. push proactive ALERTs, obey the replies
+[03:47:03] [Agent-A] [SEND ] ALERT          id=5ecf72f7 (340 bytes)
+[03:47:03] [Agent-A] [RECV ] ACTION         id=db3bbb82 reply_to=5ecf72f7
+[03:47:03] [Agent-A] [RTT  ] ALERT round trip 1.2 ms
+[03:47:03] [Agent-A] [AUTO ] ACTION BLOCK_MERGE on auth.py, mode now SECURITY
+[03:47:03] [Agent-A] [SEND ] ALERT          id=238a7a92 (351 bytes)
+[03:47:03] [Agent-A] [RECV ] ACTION         id=08a5382e reply_to=238a7a92
+[03:47:03] [Agent-A] [RTT  ] ALERT round trip 0.4 ms
+[03:47:03] [Agent-A] [AUTO ] ACTION SCHEDULE_REVIEW on parser.py, mode now PERFORMANCE
+[03:47:03] [Agent-A] [SEND ] ALERT          id=6ad8cac5 (323 bytes)
+[03:47:03] [Agent-A] [RECV ] ACK            id=02128524 reply_to=6ad8cac5
+[03:47:03] [Agent-A] [RTT  ] ALERT round trip 0.3 ms
+[03:47:03] [Agent-A] [INFO ] LOW alert answer: ACK {'status': 'logged'}
+[03:47:03] [Agent-A] [STEP ] 4. streamed review request
+[03:47:03] [Agent-A] [SEND ] REVIEW_REQUEST id=f49f7af9 (523 bytes)
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=131eddbb reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 1/6 CRITICAL line 2: HARDCODED_SECRET - Credential stored in source code
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=a2ac6904 reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 2/6 HIGH     line 10: DANGEROUS_CALL - eval/exec on dynamic input
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=c2f90a5b reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 3/6 HIGH     line 6: NESTED_LOOPS - 3 nested loops
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=f7da6be1 reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 4/6 MEDIUM   line 8: BARE_EXCEPT - Bare except hides real errors
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=3a5c763e reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 5/6 MEDIUM   line 1: HIGH_COMPLEXITY - Complexity 5 exceeds limit 4
+[03:47:03] [Agent-A] [RECV ] REVIEW_CHUNK   id=4daed4db reply_to=f49f7af9
+[03:47:03] [Agent-A] [CHUNK] 6/6 LOW      line 1: MISSING_DOCSTRING - Function has no docstring
+[03:47:03] [Agent-A] [RECV ] REVIEW_RESULT  id=87baf7b2 reply_to=f49f7af9
+[03:47:03] [Agent-A] [RTT  ] REVIEW_REQUEST round trip 303.3 ms
+[03:47:03] [Agent-A] [INFO ] review finished: {'file_name': 'login.py', 'mode': 'ALL', 'total_findings': 6, 'worst_severity': 'CRITICAL'}
+[03:47:03] [Agent-A] [STEP ] 5. stability test: send a malformed frame
+[03:47:03] [Agent-A] [SEND ] RAW garbage frame (22 bytes)
+[03:47:03] [Agent-A] [RECV ] ERROR          id=a3aa9f48 reply_to=None
+[03:47:03] [Agent-A] [INFO ] B rejected it with ERROR: bad JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+[03:47:03] [Agent-A] [SEND ] ALERT          id=91c4dfa4 (314 bytes)
+[03:47:03] [Agent-A] [RECV ] ACK            id=5aacdaba reply_to=91c4dfa4
+[03:47:03] [Agent-A] [RTT  ] ALERT round trip 0.4 ms
+[03:47:03] [Agent-A] [INFO ] link survived the bad frame, got ACK
+[03:47:03] [Agent-A] [STEP ] 6. clean shutdown
+[03:47:03] [Agent-A] [SEND ] BYE            id=b63f3a54 (252 bytes)
+[03:47:03] [Agent-A] [RECV ] BYE_ACK        id=b1f5b9d9 reply_to=b63f3a54
+[03:47:03] [Agent-A] [INFO ] reader thread: connection closed
+[03:47:03] [Agent-A] [RTT  ] BYE round trip 0.4 ms
+[03:47:03] [Agent-A] [PERF ] 8 round trips, avg 38.4 ms, max 303.3 ms
+[03:47:03] [Agent-A] [STATE] final state: mode=PERFORMANCE stats={'reviews_done': 12, 'issues_found': 33}

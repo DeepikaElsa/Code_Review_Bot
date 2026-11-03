@@ -1,0 +1,61 @@
+==============================================================================
+ CodeReviewBot Rule-Based Environmental Reasoner (Simple Reflex Agent)
+==============================================================================
+[03:10:58] [SENSE   ] C001 config.py lines=119 cx=1 tests=False docs=14%
+[03:10:58] [MEDIUM  ] R5_LOW_DOCS -> trigger DOCUMENTATION_REVIEW: Docstring coverage 14% in config.py.
+[03:10:58] [LOW     ] R6_STYLE_NOISE -> trigger STYLE_REVIEW: 17 style violations in config.py.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C002 auth.py lines=437 cx=2 tests=True docs=23%
+[03:10:58] [CRITICAL] R1_SECRET_LEAK -> trigger SECURITY_REVIEW: Hardcoded secret detected in auth.py. Block merge.
+[03:10:58] [HIGH    ] R3_PERFORMANCE_RISK -> trigger PERFORMANCE_REVIEW: 4 nested loops in auth.py. Possible O(n^4).
+[03:10:58] [MEDIUM  ] R5_LOW_DOCS -> trigger DOCUMENTATION_REVIEW: Docstring coverage 23% in auth.py.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C003 stream_handler.py lines=208 cx=23 tests=False docs=59%
+[03:10:58] [HIGH    ] R2_HIGH_COMPLEXITY -> trigger COMPLEXITY_REVIEW: Complexity 23 in stream_handler.py. Suggest refactor.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C004 config.py lines=437 cx=11 tests=False docs=96%
+[03:10:58] [HIGH    ] R4_UNTESTED_BIG_CHANGE -> trigger BUG_DETECTION_REVIEW: 437 lines changed with no tests in config.py.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C005 auth.py lines=394 cx=4 tests=False docs=60%
+[03:10:58] [HIGH    ] R4_UNTESTED_BIG_CHANGE -> trigger BUG_DETECTION_REVIEW: 394 lines changed with no tests in auth.py.
+[03:10:58] [LOW     ] R6_STYLE_NOISE -> trigger STYLE_REVIEW: 14 style violations in auth.py.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C006 stream_handler.py lines=132 cx=13 tests=True docs=83%
+[03:10:58] [HIGH    ] R3_PERFORMANCE_RISK -> trigger PERFORMANCE_REVIEW: 4 nested loops in stream_handler.py. Possible O(n^4).
+[03:10:58] [LOW     ] R6_STYLE_NOISE -> trigger STYLE_REVIEW: 11 style violations in stream_handler.py.
+------------------------------------------------------------------------------
+[03:10:58] [SENSE   ] C007 stream_handler.py lines=201 cx=23 tests=True docs=23%
+[03:10:58] [CRITICAL] R1_SECRET_LEAK -> trigger SECURITY_REVIEW: Hardcoded secret detected in stream_handler.py. Block merge.
+[03:10:58] [HIGH    ] R2_HIGH_COMPLEXITY -> trigger COMPLEXITY_REVIEW: Complexity 23 in stream_handler.py. Suggest refactor.
+[03:10:58] [MEDIUM  ] R5_LOW_DOCS -> trigger DOCUMENTATION_REVIEW: Docstring coverage 23% in stream_handler.py.
+------------------------------------------------------------------------------
+[03:10:59] [SENSE   ] C008 ui_render.py lines=243 cx=4 tests=False docs=64%
+[03:10:59] [OK      ] C008: no rule fired. Code looks clean.
+------------------------------------------------------------------------------
+[03:10:59] [WARN    ] Malformed telemetry ignored: 'commit=C009;file=???;lines=abc;;corrupt'
+------------------------------------------------------------------------------
+[03:10:59] [SENSE   ] C010 config.py lines=180 cx=18 tests=True docs=38%
+[03:10:59] [HIGH    ] R2_HIGH_COMPLEXITY -> trigger COMPLEXITY_REVIEW: Complexity 18 in config.py. Suggest refactor.
+[03:10:59] [HIGH    ] R3_PERFORMANCE_RISK -> trigger PERFORMANCE_REVIEW: 4 nested loops in config.py. Possible O(n^4).
+------------------------------------------------------------------------------
+[03:10:59] [SENSE   ] C011 config.py lines=337 cx=25 tests=True docs=3%
+[03:10:59] [HIGH    ] R2_HIGH_COMPLEXITY -> trigger COMPLEXITY_REVIEW: Complexity 25 in config.py. Suggest refactor.
+[03:10:59] [MEDIUM  ] R5_LOW_DOCS -> trigger DOCUMENTATION_REVIEW: Docstring coverage 3% in config.py.
+[03:10:59] [LOW     ] R6_STYLE_NOISE -> trigger STYLE_REVIEW: 12 style violations in config.py.
+------------------------------------------------------------------------------
+[03:10:59] [SENSE   ] C012 api_routes.py lines=72 cx=7 tests=False docs=50%
+[03:10:59] [HIGH    ] R3_PERFORMANCE_RISK -> trigger PERFORMANCE_REVIEW: 3 nested loops in api_routes.py. Possible O(n^3).
+------------------------------------------------------------------------------
+==============================================================================
+ EXECUTION SUMMARY
+==============================================================================
+ Packets received   : 12
+ Malformed packets  : 1
+ Clean commits      : 1
+ Actions triggered  : 20
+   - BUG_DETECTION_REVIEW  : 2
+   - COMPLEXITY_REVIEW     : 4
+   - DOCUMENTATION_REVIEW  : 4
+   - PERFORMANCE_REVIEW    : 4
+   - SECURITY_REVIEW       : 2
+   - STYLE_REVIEW          : 4
